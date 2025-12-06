@@ -495,7 +495,7 @@ where
             },
             Err(err) => {
                 let borrowed_err = Arc::new(err);
-                log::error!("QUIC handshake failed in IQC::start_with_result"; "error" => borrowed_err);
+                log::error!("QUIC handshake failed in IQC::start_with_result"; "error" => borrowed_err.clone());
                 Err(*borrowed_err) // Pass it upward
             }
         }
