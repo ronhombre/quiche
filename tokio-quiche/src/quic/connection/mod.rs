@@ -54,6 +54,7 @@ use std::task::Poll;
 use std::time::Duration;
 use std::time::Instant;
 use std::time::SystemTime;
+use anyhow::__private::kind::TraitKind;
 use tokio::sync::mpsc;
 use tokio_util::task::AbortOnDropHandle;
 
@@ -492,9 +493,10 @@ where
 
                 Ok(q_conn)
             },
-            Err(mut e) => {
-                log::error!("QUIC handshake failed in IQC::start_with_result"; "error" => e.borrow_mut());
-                Err(e) // Pass it upward
+            Err(e) => {
+                let handshake_error = HandshakeError::from(*e);
+                log::error!("QUIC handshake failed in IQC::start_with_result"; "error" => e);
+                Err(io::Error::other(handshake_error)) // Pass it upward
             }
         }
     }
