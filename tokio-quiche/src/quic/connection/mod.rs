@@ -492,7 +492,7 @@ where
 
                 Ok(q_conn)
             },
-            Err(e) => {
+            Err(mut e) => {
                 log::error!("QUIC handshake failed in IQC::start_with_result"; "error" => e.borrow_mut());
                 Err(e) // Pass it upward
             }
