@@ -44,6 +44,7 @@ use foundations::telemetry::log;
 use futures::future::BoxFuture;
 use futures::Future;
 use quiche::ConnectionId;
+use std::borrow::BorrowMut;
 use std::fmt;
 use std::io;
 use std::net::SocketAddr;
@@ -492,7 +493,7 @@ where
                 Ok(q_conn)
             },
             Err(e) => {
-                log::error!("QUIC handshake failed in IQC::start_with_result"; "error" => e.borrow());
+                log::error!("QUIC handshake failed in IQC::start_with_result"; "error" => e.borrow_mut());
                 Err(e) // Pass it upward
             }
         }
