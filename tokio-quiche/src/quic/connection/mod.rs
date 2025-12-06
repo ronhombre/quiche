@@ -44,7 +44,6 @@ use foundations::telemetry::log;
 use futures::future::BoxFuture;
 use futures::Future;
 use quiche::ConnectionId;
-use std::borrow::BorrowMut;
 use std::fmt;
 use std::io;
 use std::net::SocketAddr;
@@ -55,6 +54,7 @@ use std::time::Duration;
 use std::time::Instant;
 use std::time::SystemTime;
 use anyhow::__private::kind::TraitKind;
+use thiserror::__private17::AsDynError;
 use tokio::sync::mpsc;
 use tokio_util::task::AbortOnDropHandle;
 
@@ -493,10 +493,10 @@ where
 
                 Ok(q_conn)
             },
-            Err(e) => {
-                let handshake_error = HandshakeError::from(*e);
-                log::error!("QUIC handshake failed in IQC::start_with_result"; "error" => e);
-                Err(io::Error::other(handshake_error)) // Pass it upward
+            Err(err) => {
+                let borrowed_err = Arc::new(err);
+                log::error!("QUIC handshake failed in IQC::start_with_result"; "error" => borrowed_err);
+                Err(*borrowed_err) // Pass it upward
             }
         }
     }
