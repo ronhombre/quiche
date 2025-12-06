@@ -492,7 +492,7 @@ where
                 Ok(q_conn)
             },
             Err(e) => {
-                log::error!("QUIC handshake failed in IQC::start_with_result"; "error" => e.to_string());
+                log::error!("QUIC handshake failed in IQC::start_with_result"; "error" => e.borrow());
                 Err(e) // Pass it upward
             }
         }
