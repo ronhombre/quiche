@@ -305,12 +305,12 @@ where
 
     if let Some(verify_file) = &params.settings.verify_file {
         log::info!("setting up verify_file"; "verify_file"=>verify_file);
-        &config.quiche_config.load_verify_locations_from_file(verify_file);
+        config.quiche_config.load_verify_locations_from_file(verify_file).into_io()?;
     }
 
     if let Some(verify_directory) = &params.settings.verify_directory {
         log::info!("setting up verify_directory"; "verify_directory"=>verify_directory);
-        &config.quiche_config.load_verify_locations_from_directory(verify_directory);
+        config.quiche_config.load_verify_locations_from_directory(verify_directory).into_io()?;
     }
 
     let local_addr = socket.socket.local_addr()?;
