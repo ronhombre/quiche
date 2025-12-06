@@ -479,7 +479,9 @@ where
     /// [`InitialQuicConnection::resume`] into a single call.
     pub async fn start_with_result<A: ApplicationOverQuic>(self, app: A) -> io::Result<QuicConnection> {
         let task_metrics = self.params.metrics.clone();
-        let result = self.handshake(app).await;
+        let result = self.handshake(app).await/*.inspect_err(|err| {
+            log::error!("QUIC handshake failed in IQC::start_with_result"; "error" => err);
+        })*/;
 
         match result {
             Ok((q_conn, handshake)) => {
@@ -494,8 +496,7 @@ where
                 Ok(q_conn)
             },
             Err(err) => {
-                let borrowed_err = Arc::new(err);
-                log::error!("QUIC handshake failed in IQC::start_with_result"; "error" => borrowed_err.clone());
+                log::error!("QUIC handshake failed in IQC::start_with_result"; "error" => &err);
                 Err(err) // Pass it upward
             }
         }
